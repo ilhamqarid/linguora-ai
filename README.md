@@ -4,6 +4,9 @@
 
 Linguora est un assistant linguistique web pour le français et le darija/amazigh marocains : correction orthographique et grammaticale, traduction, reformulation, OCR et dictée vocale:le tout avec une IA en renfort (Groq) qui se replie automatiquement sur des méthodes par règles si elle est indisponible.
 
+<img width="1667" height="816" alt="interface linguora" src="https://github.com/user-attachments/assets/519486ef-44bb-4914-8318-f4dce99d7965" />
+
+
 ## Fonctionnalités
 
 - **Correction** : orthographe et grammaire via [LanguageTool](https://languagetool.org/), avec sélection interactive des corrections à appliquer. L'IA (Groq) est utilisée en priorité quand disponible pour une correction plus contextuelle (comprend le sens, pas seulement la distance d'édition).
