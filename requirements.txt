@@ -1,0 +1,10 @@
+flask
+deep-translator
+pillow
+pytesseract
+requests
+python-dotenv
+flask-limiter
+
+# Dépendances de développement / tests
+pytest

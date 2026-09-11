@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Linguora — Espace de travail multilingue</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Correction, traduction et reformulation en français, darija et amazigh." />
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <div class="page">
+
+    {% set active_page = 'home' %}
+    {% include "_header.html" %}
+
+    <main class="home-hero">
+      <h1 class="home-hero-title">Comment Linguora peut-il vous aider ?</h1>
+      <p class="home-hero-sub">Écrivez, parlez ou importez une image — Linguora corrige, traduit et reformule en français, darija et amazigh (+ 35 autres langues).</p>
+
+      <label class="sr-only" for="homeInput">Votre texte</label>
+      <textarea id="homeInput" class="home-input" placeholder="Écrivez ici…"></textarea>
+
+      <div class="home-actions">
+        <button type="button" class="home-action-btn" data-action="correct">
+          <span class="home-action-icon" aria-hidden="true">✓</span>Corriger
+        </button>
+        <button type="button" class="home-action-btn" data-action="translate">
+          <span class="home-action-icon" aria-hidden="true">⇄</span>Traduire
+        </button>
+        <button type="button" class="home-action-btn" data-action="rephrase">
+          <span class="home-action-icon" aria-hidden="true">✎</span>Reformuler
+        </button>
+        <button type="button" class="home-action-btn" data-action="ocr" id="homeOcrBtn">
+          <span class="home-action-icon" aria-hidden="true">▣</span>Image (OCR)
+        </button>
+        <input type="file" id="homeImageInput" accept="image/*" class="sr-only" aria-hidden="true" tabindex="-1">
+        <button type="button" class="home-action-btn" data-action="voice" id="homeVoiceBtn">
+          <span class="home-action-icon" aria-hidden="true">●</span>Voix
+        </button>
+      </div>
+    </main>
+
+    <footer class="site-footer site-footer-home">
+      <p>Correction, traduction et reformulation réunies dans un seul espace de travail.</p>
+    </footer>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/capture.js') }}"></script>
+  <script>
+    (() => {
+      const input = document.getElementById("homeInput");
+      const workspaceUrl = "{{ url_for('pages.workspace') }}";
+
+      function goToWorkspace(text, action) {
+        if (text) sessionStorage.setItem("linguora_pending_text", text);
+        if (action) sessionStorage.setItem("linguora_pending_action", action);
+        window.location.href = workspaceUrl;
+      }
+
+      // Corriger / Traduire / Reformuler : nécessitent un texte déjà
+      // saisi, puis redirection + déclenchement automatique sur l'espace
+      // de travail (comportement inchangé).
+      ["correct", "translate", "rephrase"].forEach((action) => {
+        const btn = document.querySelector(`.home-action-btn[data-action="${action}"]`);
+        btn.addEventListener("click", () => {
+          const text = input.value.trim();
+          if (!text) {
+            input.focus();
+            return;
+          }
+          goToWorkspace(text, action);
+        });
+      });
+
+      // Image (OCR) : ouvre directement le sélecteur de fichier, sans
+      // passer par l'espace de travail d'abord.
+      const ocrBtn = document.getElementById("homeOcrBtn");
+      const homeImageInput = document.getElementById("homeImageInput");
+
+      ocrBtn.addEventListener("click", () => homeImageInput.click());
+
+      homeImageInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const originalLabel = ocrBtn.innerHTML;
+        LinguoraCapture.runOcrUpload(file, {
+          onStart: () => {
+            ocrBtn.disabled = true;
+            ocrBtn.textContent = "Analyse de l'image…";
+          },
+          onSuccess: (text) => goToWorkspace(text, null),
+          onError: (message) => {
+            alert(message);
+            ocrBtn.disabled = false;
+            ocrBtn.innerHTML = originalLabel;
+          },
+        });
+        homeImageInput.value = "";
+      });
+
+      // Voix : démarre directement l'écoute (le navigateur demande la
+      // permission micro ici, sur l'accueil), sans étape intermédiaire.
+      const voiceBtn = document.getElementById("homeVoiceBtn");
+      const originalVoiceLabel = voiceBtn.innerHTML;
+
+      voiceBtn.addEventListener("click", () => {
+        LinguoraCapture.runSpeechRecognition({
+          onStart: () => {
+            voiceBtn.disabled = true;
+            voiceBtn.textContent = "Écoute en cours…";
+          },
+          onResult: (transcript) => goToWorkspace(transcript, null),
+          onEnd: () => {
+            voiceBtn.disabled = false;
+            voiceBtn.innerHTML = originalVoiceLabel;
+          },
+          onError: (message) => {
+            alert(message);
+            voiceBtn.disabled = false;
+            voiceBtn.innerHTML = originalVoiceLabel;
+          },
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

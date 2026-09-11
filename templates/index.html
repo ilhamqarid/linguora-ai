@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Linguora — Espace de travail multilingue</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Correction, traduction et reformulation en français, darija et amazigh." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <div class="page">
+
+    <header class="site-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">ⵣ</span>
+        <span class="brand-name">Linguora</span>
+      </div>
+      <p class="brand-tagline">Écrire. Traduire. Comprendre. Communiquer.</p>
+    </header>
+
+    <main class="workspace" id="layout">
+
+      <!-- ================= PAGE GAUCHE : SAISIE ================= -->
+      <section class="page-pane" aria-labelledby="input-heading">
+        <div class="pane-head">
+          <h2 id="input-heading">Votre texte</h2>
+          <p class="pane-hint">Écrivez, collez, parlez au micro ou importez une image.</p>
+        </div>
+
+        <div class="input-tools">
+          <button class="tool-chip" id="recordBtn" type="button">
+            <span class="tool-chip-icon" aria-hidden="true">●</span>
+            Enregistrer l'audio
+          </button>
+
+          <div class="tool-chip file-chip">
+            <span class="tool-chip-icon" aria-hidden="true">▣</span>
+            <span>Importer une image</span>
+            <input type="file" id="imageInput" accept="image/*" aria-label="Importer une image pour extraction de texte (OCR)">
+          </div>
+
+          <span class="detected-lang" id="detectedLang" hidden></span>
+        </div>
+
+        <label class="sr-only" for="inputText">Texte à traiter</label>
+        <textarea
+          id="inputText"
+          placeholder="Écrivez ici… par exemple : « bghit nsafr l casa ghda » ou « Je suis aller au marché. »"
+        ></textarea>
+
+        <div class="mode-row">
+          <span class="mode-row-hint" id="modeHint">Correction et reformulation par IA quand elle est disponible, avec repli automatique sur les règles sinon.</span>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="targetLang">Langue cible (traduction)</label>
+            <select id="targetLang" class="select">
+              <option value="fr" selected>Français (FR)</option>
+              <option value="en">Anglais (EN)</option>
+              <option value="es">Espagnol (ES)</option>
+              <option value="de">Allemand (DE)</option>
+              <option value="it">Italien (IT)</option>
+              <option value="pt">Portugais (PT)</option>
+              <option value="ar">Arabe standard (AR)</option>
+              <option value="tr">Turc (TR)</option>
+              <option value="ru">Russe (RU)</option>
+              <option value="nl">Néerlandais (NL)</option>
+              <option value="sv">Suédois (SV)</option>
+              <option value="no">Norvégien (NO)</option>
+              <option value="da">Danois (DA)</option>
+              <option value="fi">Finnois (FI)</option>
+              <option value="pl">Polonais (PL)</option>
+              <option value="cs">Tchèque (CS)</option>
+              <option value="sk">Slovaque (SK)</option>
+              <option value="sl">Slovène (SL)</option>
+              <option value="hu">Hongrois (HU)</option>
+              <option value="ro">Roumain (RO)</option>
+              <option value="bg">Bulgare (BG)</option>
+              <option value="uk">Ukrainien (UK)</option>
+              <option value="el">Grec (EL)</option>
+              <option value="fa">Persan (FA)</option>
+              <option value="he">Hébreu (HE)</option>
+              <option value="hi">Hindi (HI)</option>
+              <option value="ur">Ourdou (UR)</option>
+              <option value="id">Indonésien (ID)</option>
+              <option value="ms">Malais (MS)</option>
+              <option value="th">Thaï (TH)</option>
+              <option value="vi">Vietnamien (VI)</option>
+              <option value="zh-CN">Chinois simplifié (ZH-CN)</option>
+              <option value="ja">Japonais (JA)</option>
+              <option value="ko">Coréen (KO)</option>
+              <option value="darija">Darija (Marocain)</option>
+              <option value="amazigh">Amazigh (Tifinagh)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="tone">Ton de reformulation</label>
+            <select id="tone" class="select">
+              <option value="neutral" selected>Neutre</option>
+              <option value="professional">Professionnel</option>
+              <option value="friendly">Amical</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="action-row" role="group" aria-label="Actions Linguora">
+          <button class="btn btn-primary" id="correctBtn" type="button">Corriger</button>
+          <button class="btn btn-secondary" id="translateBtn" type="button">Traduire</button>
+          <button class="btn btn-ghost" id="rephraseBtn" type="button">Reformuler</button>
+        </div>
+      </section>
+
+      <!-- ================= RELIURE (spine) ================= -->
+      <div class="spine" aria-hidden="true"></div>
+
+      <!-- ================= PAGE DROITE : RÉSULTAT ================= -->
+      <section class="page-pane result-pane" id="resultPane" aria-labelledby="result-heading" aria-live="polite">
+
+        <div class="pane-head">
+          <h2 id="result-heading">Résultat</h2>
+          <span class="result-tag" id="resultTag">En attente</span>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+          <p>Rien à voir pour l'instant.</p>
+          <p class="empty-state-sub">Corrigez, traduisez ou reformulez votre texte pour voir le résultat ici.</p>
+        </div>
+
+        <div class="result-body" id="resultBody" hidden>
+          <p id="resultOutput"></p>
+        </div>
+
+        <div class="errors-panel" id="errorsPanel" hidden>
+          <button class="errors-toggle" id="errorsToggle" type="button" aria-expanded="false" aria-controls="errorsList">
+            <span id="errorsCount">0 correction détectée</span>
+            <span class="errors-toggle-icon" aria-hidden="true">▾</span>
+          </button>
+          <ul class="errors-list" id="errorsList" hidden></ul>
+        </div>
+
+        <div class="result-footer" id="resultFooter" hidden>
+          <span id="resultStatus"></span>
+          <div class="result-actions">
+            <button class="link-btn" id="copyResult" type="button">Copier</button>
+            <button class="link-btn" id="replaceResult" type="button">Remplacer le texte d'entrée</button>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <p>Correction, traduction et reformulation réunies dans un seul espace de travail.</p>
+    </footer>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
