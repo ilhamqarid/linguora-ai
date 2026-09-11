@@ -2,16 +2,16 @@
 
 **Écrire. Traduire. Comprendre. Communiquer.**
 
-Linguora est un assistant linguistique web pour le français et le darija/amazigh marocains : correction orthographique et grammaticale, traduction, reformulation, OCR et dictée vocale — le tout avec une IA en renfort (Groq) qui se replie automatiquement sur des méthodes par règles si elle est indisponible.
+Linguora est un assistant linguistique web pour le français et le darija/amazigh marocains : correction orthographique et grammaticale, traduction, reformulation, OCR et dictée vocale:le tout avec une IA en renfort (Groq) qui se replie automatiquement sur des méthodes par règles si elle est indisponible.
 
 ## Fonctionnalités
 
-- **Correction** — orthographe et grammaire via [LanguageTool](https://languagetool.org/), avec sélection interactive des corrections à appliquer. L'IA (Groq) est utilisée en priorité quand disponible pour une correction plus contextuelle (comprend le sens, pas seulement la distance d'édition).
-- **Traduction** — vers plusieurs langues (anglais, espagnol, arabe, darija, amazigh...). L'IA traduit en priorité ; repli sur [deep-translator](https://github.com/nidhaloff/deep-translator) (Google Translate) ou sur un dictionnaire rule-based pour le darija/amazigh si l'IA est indisponible.
-- **Darija & Amazigh** — détection automatique de la langue d'entrée (écriture arabe, tifinagh ou latine). Pivot vers le français via IA (comprend les trois écritures) avec repli sur un dictionnaire rule-based (transcription latine uniquement). Pour l'amazigh, la traduction passe par un alphabet latin berbère intermédiaire puis une translittération déterministe vers le Tifinagh, afin de toujours produire des caractères valides.
-- **Reformulation** — plusieurs tons (neutre, professionnel, amical), par IA en priorité, repli par règles.
+- **Correction** : orthographe et grammaire via [LanguageTool](https://languagetool.org/), avec sélection interactive des corrections à appliquer. L'IA (Groq) est utilisée en priorité quand disponible pour une correction plus contextuelle (comprend le sens, pas seulement la distance d'édition).
+- **Traduction** : vers plusieurs langues (anglais, espagnol, arabe, darija, amazigh...). L'IA traduit en priorité ; repli sur [deep-translator](https://github.com/nidhaloff/deep-translator) (Google Translate) ou sur un dictionnaire rule-based pour le darija/amazigh si l'IA est indisponible.
+- **Darija & Amazigh** : détection automatique de la langue d'entrée (écriture arabe, tifinagh ou latine). Pivot vers le français via IA (comprend les trois écritures) avec repli sur un dictionnaire rule-based (transcription latine uniquement). Pour l'amazigh, la traduction passe par un alphabet latin berbère intermédiaire puis une translittération déterministe vers le Tifinagh, afin de toujours produire des caractères valides.
+- **Reformulation** : plusieurs tons (neutre, professionnel, amical), par IA en priorité, repli par règles.
 - **OCR** — import d'image, extraction de texte via [Tesseract](https://github.com/tesseract-ocr/tesseract).
-- **Dictée vocale** — via l'API Web Speech du navigateur.
+- **Dictée vocale** : via l'API Web Speech du navigateur.
 
 Dans tous les cas où l'IA est indisponible (clé absente, quota dépassé, erreur réseau), l'application ne plante jamais : elle bascule silencieusement sur son pipeline par règles.
 
@@ -84,7 +84,7 @@ Mesures en place :
 - **Validation de taille des entrées** : texte limité à `MAX_TEXT_LENGTH` (5000 caractères par défaut), appliquée avant tout appel à LanguageTool/Groq. Upload d'image limité par `MAX_UPLOAD_MB` (5 Mo par défaut) et restreint à une liste blanche d'extensions.
 - **Upload de fichiers sécurisé** : nom de fichier assaini (`secure_filename`) + préfixe unique (`uuid`), suppression garantie du fichier temporaire même en cas d'erreur.
 - **Secrets** : clé API et clé secrète Flask exclusivement via variables d'environnement (`.env`, jamais commité — voir `.gitignore`), jamais codées en dur.
-- **Mode debug désactivé par défaut** : le débogueur Werkzeug (`FLASK_DEBUG=true`) permettrait l'exécution de code arbitraire depuis le navigateur en cas d'erreur non gérée — il n'est jamais activé sans un choix explicite en développement local.
+- **Mode debug désactivé par défaut** : le débogueur Werkzeug (`FLASK_DEBUG=true`) permettrait l'exécution de code arbitraire depuis le navigateur en cas d'erreur non gérée, il n'est jamais activé sans un choix explicite en développement local.
 
 Limites connues (pas d'audit de sécurité formel/tiers) :
 - Le stockage du rate limiting (`memory://` par défaut) n'est pas partagé entre plusieurs workers/process — suffisant pour un usage mono-process, insuffisant pour un vrai déploiement multi-workers (prévoir Redis via `RATELIMIT_STORAGE_URI`).
@@ -115,10 +115,8 @@ linguora-ai/
 Par souci d'honnêteté produit, quelques limites assumées à ce stade :
 
 - **Traduction amazigh** : l'IA connaît bien la grammaire générale du tamazight mais son vocabulaire n'est pas toujours fiable (langue peu représentée dans les données d'entraînement des modèles actuels). Le résultat doit être considéré comme une aide, pas une traduction certifiée.
-- **Pas de contexte de traduction** (registre général / professionnel / académique / familier) — prévu, pas encore implémenté.
 - **Pas d'indicateur de qualité du texte** (score visuel) — prévu, pas encore implémenté.
 - **Pas d'historique des opérations** — prévu, pas encore implémenté.
-- **OCR et dictée vocale** remplissent le champ texte mais ne sont pas encore intégrés à un flux plus élaboré (relecture automatique, corrections suggérées à la volée, etc.).
 
 ## Licence
 
