@@ -124,3 +124,5 @@ Par souci d'honnêteté produit, quelques limites assumées à ce stade :
 ## Licence
 
 Projet personnel / académique.
+
+© 2026 Ilham Qarid  Tous droits reserves , toute reutilisation, copie ou redistribution n'est pas autorisee sans accord prealable.
