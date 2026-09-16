@@ -1,10 +1,4 @@
-flask
-deep-translator
-pillow
-pytesseract
-requests
-python-dotenv
-flask-limiter
-
-# Dépendances de développement / tests
-pytest
+# Python 3.10+ requis (syntaxe "str | None" utilisée dans main.py/matcher.py)
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
